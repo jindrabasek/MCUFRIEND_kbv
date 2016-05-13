@@ -12,8 +12,8 @@
 //
 
 #include <Adafruit_GFX.h>
-#include <UTFTGLUE.h>
-UTFTGLUE myGLCD(0x9163,A2,A1,A3,A4,A0);    //arguments are ignored
+#include <UTFT.h>
+UTFT myGLCD(0x9163,A2,A1,A3,A4,A0);    //arguments are ignored
 
 // Declare which fonts we will be using
 extern uint8_t SmallFont[];

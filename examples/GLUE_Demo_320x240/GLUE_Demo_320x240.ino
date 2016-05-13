@@ -23,13 +23,13 @@
 
 #include <Adafruit_GFX.h>
 //#include <Adafruit_TFTLCD.h>     // this header is not needed
-#include <UTFTGLUE.h>              // class methods are in here
-//UTFTGLUE myGLCD;                         // use for default shield
-//UTFTGLUE myGLCD(0x9320,A2,A1,A3,A4,A0);
-//UTFTGLUE myGLCD(0x9325,A2,A1,A3,A4,A0);
-//UTFTGLUE myGLCD(0x7783,A2,A1,A3,A4,A0);
-//UTFTGLUE myGLCD(0x1289,A1,A2,A0,0,A3);    // this might choose the pins
-UTFTGLUE myGLCD(0x0154,A2,A1,A3,A4,A0);
+#include <UTFT.h>              // class methods are in here
+//UTFT myGLCD;                         // use for default shield
+//UTFT myGLCD(0x9320,A2,A1,A3,A4,A0);
+//UTFT myGLCD(0x9325,A2,A1,A3,A4,A0);
+//UTFT myGLCD(0x7783,A2,A1,A3,A4,A0);
+//UTFT myGLCD(0x1289,A1,A2,A0,0,A3);    // this might choose the pins
+UTFT myGLCD(0x0154,A2,A1,A3,A4,A0);
 
 /*
 #include <UTFT.h>

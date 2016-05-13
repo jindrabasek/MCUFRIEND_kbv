@@ -1,4 +1,5 @@
 //#define USE_SPECIAL             //check for custom drivers
+#define UNO_SHIELD_MOD_FOR_MEGA
 #if defined(USE_SPECIAL)
 #include "mcufriend_special.h"
 #if !defined(USE_SPECIAL_FAIL)
@@ -35,7 +36,7 @@
 #define PIN_HIGH(p, b)       (p) |= (1<<(b))
 #define PIN_OUTPUT(p, b)     *(&p-1) |= (1<<(b))
 
-#elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)       //regular UNO shield on MEGA2560
+#elif (defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)) && !defined(UNO_SHIELD_MOD_FOR_MEGA)       //regular UNO shield on MEGA2560
 #define RD_PORT PORTF
 #define RD_PIN  0
 #define WR_PORT PORTF
@@ -66,6 +67,34 @@
                       )
 #define setWriteDir() { DDRH |=  HMASK; DDRG |=  GMASK; DDRE |=  EMASK;  }
 #define setReadDir()  { DDRH &= ~HMASK; DDRG &= ~GMASK; DDRE &= ~EMASK;  }
+#define write8(x)     { write_8(x); WR_STROBE; }
+#define write16(x)    { uint8_t h = (x)>>8, l = x; write8(h); write8(l); }
+#define READ_8(dst)   { RD_STROBE; dst = read_8(); RD_IDLE; }
+#define READ_16(dst)  { uint8_t hi; READ_8(hi); READ_8(dst); dst |= (hi << 8); }
+
+#define PIN_LOW(p, b)        (p) &= ~(1<<(b))
+#define PIN_HIGH(p, b)       (p) |= (1<<(b))
+#define PIN_OUTPUT(p, b)     *(&p-1) |= (1<<(b))
+
+#elif (defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)) && defined(UNO_SHIELD_MOD_FOR_MEGA)       //regular UNO shield on MEGA2560
+#define RD_PORT PORTF
+#define RD_PIN  0
+#define WR_PORT PORTF
+#define WR_PIN  1
+#define CD_PORT PORTF
+#define CD_PIN  2
+#define CS_PORT PORTF
+#define CS_PIN  3
+#define RESET_PORT PORTF
+#define RESET_PIN  4
+
+#define AMASK 0xFF
+#define AMASK_NEG 0x00
+#define write_8(x)   { PORTA = x; }
+#define read_8()     PINA
+
+#define setWriteDir() { DDRA = AMASK; }
+#define setReadDir()  { DDRA = AMASK_NEG; }
 #define write8(x)     { write_8(x); WR_STROBE; }
 #define write16(x)    { uint8_t h = (x)>>8, l = x; write8(h); write8(l); }
 #define READ_8(dst)   { RD_STROBE; dst = read_8(); RD_IDLE; }

@@ -12,9 +12,9 @@
 
 #include <Adafruit_GFX.h>
 //#include <Adafruit_TFTLCD.h>
-#include <UTFTGLUE.h>
-//UTFTGLUE myGLCD;                         // use for default shield
-UTFTGLUE myGLCD(0x9488,A2,A1,A3,A4,A0);
+#include <UTFT.h>
+//UTFT myGLCD;                         // use for default shield
+UTFT myGLCD(0x9488,A2,A1,A3,A4,A0);
 extern uint8_t SmallFont[];
 
 /*

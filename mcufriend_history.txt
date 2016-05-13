@@ -8,7 +8,7 @@ Will Never Happen:
 To Be Fixed:
 	GLUE Demo seems ok now
 
-v2.9: posted 05 June 2016
+v2.9: posted 05 May 2016
     MCUFRIEND_kbv.cpp:  
 			Added pushCommand() method   to send block of 8-bit SRAM data to MIPI controller
 			SSD1963 fixed aspects.
@@ -20,7 +20,7 @@ v2.9: posted 05 June 2016
 			Conditional HX8347-A.   #define SUPPORT_8347A Untested
 			Conditional HX8347-I.   #define SUPPORT_8347D
 			Conditional SSD1289.    #define SUPPORT_1289
-	UTFTGLUE.h:
+	UTFT.h:
 	        implement drawBitmap() method. (no rotations)
     LCD_ID_readreg.ino:
 	        write(0xB0, 0x00) after hardware Reset to read manufacturer locations.
@@ -60,7 +60,7 @@ v2.5: posted 11 January 2016
     testcard_kbv.ino:   drawn version of common BMP photo.
 	scroll_kbv.ino:     changed vertScroll() call for new API    
     
-    UTFTGLUE.h:         improve calculate width and height of rectangles from coordinates.
+    UTFT.h:         improve calculate width and height of rectangles from coordinates.
     
 v2.4: posted 10 December 2015
     MCUFRIEND_kbv.cpp:  LGDP4535 initialisation table fixed - UNTESTED 
@@ -69,7 +69,7 @@ v2.3: posted 8 December 2015
     MCUFRIEND_kbv.cpp:  added S6D0139 UNTESTED
                         detect EXTC=0 ILI9341 shield from DX with ID == 0x0000.   drive in RGB mode
                         ILI9327 should Vertical Scroll now. UNTESTED
-    UTFTGLUE.h:         extra print(const char*) method to avoid warning messages
+    UTFT.h:         extra print(const char*) method to avoid warning messages
                         
     graphictest_kbv.ino: software scroll a smaller block at top of screen
     GLUE_Demo_320x240:  removed unnecessary "include Adafruit_TFTLCD.h" 
@@ -88,7 +88,7 @@ v2.2: posted 15 November 2015
     MCUFRIEND_kbv.h:    USE_GFX_KBV default argument: println(char *s="")
     MCUFRIEND_shield.h: regular Uno shield drivers for Uno, Mega, Leonardo, Due, Zero
     MCUFRIEND_special.h:  experimental drivers
-    UTFTGLUE.h:         identity kludges for non-UNO shields
+    UTFT.h:         identity kludges for non-UNO shields
     LCD_ID_readreg.ino: report reg(0x09)
 
 v2.1: posted 9 November 2015

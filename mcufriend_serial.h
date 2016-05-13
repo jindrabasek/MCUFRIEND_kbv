@@ -122,6 +122,127 @@ static inline uint8_t xchg8(uint8_t c)
 #define PIN_HIGH(port, pin)   (port).OUTSET.reg = (1<<(pin))
 #define PIN_OUTPUT(port, pin) (port).DIR.reg |= (1<<(pin))
 
+#elif defined(__AVR_ATmega2560__)
+
+//                             SCK     MOSI   SS
+#define SPI_INIT()   { DDRB |= (1<<1)|(1<<2)|(1<<0); SPCR = (1<<SPE)|(1<<MSTR); SPSR = (1<<SPI2X); SPSR; SPDR; }
+static inline uint8_t spi_xfer(uint8_t c)
+{
+    SPDR = c;
+    while ((SPSR & (1<<SPIF)) == 0) ;
+    return SPDR;
+}
+extern uint8_t running;
+static inline void write8(uint8_t x)    {
+                         if (running) {
+                             while ((SPSR & 0x80) == 0);
+                             SPDR;
+                         }
+                         SPDR = x;
+                         running = 1;
+                     }
+static inline uint8_t read8(void)    {
+                         if (running) while ((SPSR & 0x80) == 0);
+                         running = 0;
+                         return SPDR;
+                     }
+static inline uint8_t xchg8(uint8_t x) { write8(x); return read8(); }
+static inline void flush(void)   {
+                      if (running) {
+                          while ((SPSR & 0x80) == 0);
+                      }
+                      running = 0;
+                      SPDR;
+                  }
+
+#if defined(SUPPORT_8347D)
+#warning using HX8347D hardware
+#else
+#warning using regular SPI hardware
+
+// uno pin 9
+//#define CD_PORT PORTB
+//#define CD_PIN  1
+// SS pin
+// uno pin 10
+#define CS_PORT PORTB
+#define CS_PIN  1
+
+#define CD_PORT PORTF
+#define CD_PIN  2
+//#define CS_PORT PORTF
+//#define CS_PIN  3
+#define RESET_PORT PORTF
+#define RESET_PIN  4
+
+
+// uno pin 8
+//#define RESET_PORT PORTB
+//#define RESET_PIN  0
+#define RD_IDLE
+#define WR_IDLE
+#endif
+
+/*
+Uno
+
+shield.h
+A2 - A4
+#define CD_PORT PORTC
+#define CD_PIN  2
+#define CS_PORT PORTC
+#define CS_PIN  3
+#define RESET_PORT PORTC
+#define RESET_PIN  4
+
+special.h
+
+#define CD_PORT PORTC
+#define CD_PIN  1
+#define CS_PORT PORTC
+#define CS_PIN  0
+#define RESET_PORT PORTB
+#define RESET_PIN  1      //actually SD_CS
+
+ */
+
+
+/*
+
+Mega
+
+shield.h
+A2 - A4
+#define CD_PORT PORTF
+#define CD_PIN  2
+#define CS_PORT PORTF
+#define CS_PIN  3
+#define RESET_PORT PORTF
+#define RESET_PIN  4
+
+special.h
+
+#define CD_PORT PORTD
+#define CD_PIN  7        //D38 CTE
+#define CS_PORT PORTG
+#define CS_PIN  1        //D40 CTE
+#define RESET_PORT PORTG
+#define RESET_PIN  0     //D41 CTE
+
+*/
+
+#define setWriteDir() { }
+#define setReadDir()  { }
+//#define write8(x)     spi_xfer(x)
+#define write16(x)    { uint8_t h = (x)>>8, l = x; write8(h); write8(l); }
+#define READ_8(dst)   { dst = xchg8(0); }
+#define READ_16(dst)  { dst = xchg8(0); dst = (dst << 8) | xchg8(0);  }
+
+#define PIN_LOW(p, b)        (p) &= ~(1<<(b))
+#define PIN_HIGH(p, b)       (p) |= (1<<(b))
+#define PIN_OUTPUT(p, b)     *(&p-1) |= (1<<(b))
+
+
 #elif defined(__AVR_ATxmega128A1__)     //3.49s @ 32MHz -O2
   #define CD_PORT VPORT2
   #define CD_PIN  1

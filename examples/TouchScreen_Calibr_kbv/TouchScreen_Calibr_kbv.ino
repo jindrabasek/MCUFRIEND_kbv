@@ -19,8 +19,8 @@
 #define TITLE "TouchScreen.h Calibration"
 
 #include <Adafruit_GFX.h>
-#include <UTFTGLUE.h>            //we are using UTFT display methods
-UTFTGLUE myGLCD(0x9341, A2, A1, A3, A4, A0);
+#include <UTFT.h>            //we are using UTFT display methods
+UTFT myGLCD(0x9341, A2, A1, A3, A4, A0);
 
 #include <TouchScreen.h>         //Adafruit Library
 

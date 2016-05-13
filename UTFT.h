@@ -1,13 +1,13 @@
 /*
- * utftglue.h
+ * UTFT.h
  *
  * Created: 02/03/2013 14:25:06
  *  Author: David Prentice
  */ 
 
 
-#ifndef UTFTGLUE_H_
-#define UTFTGLUE_H_
+#ifndef UTFT_H_
+#define UTFT_H_
 
 #define LEFT 0
 #define RIGHT 9999
@@ -16,22 +16,44 @@
 #define PORTRAIT 0
 #define LANDSCAPE 1
 
+//*********************************
+// COLORS
+//*********************************
+// VGA color palette
+#define VGA_BLACK       0x0000
+#define VGA_WHITE       0xFFFF
+#define VGA_RED         0xF800
+#define VGA_GREEN       0x0400
+#define VGA_BLUE        0x001F
+#define VGA_SILVER      0xC618
+#define VGA_GRAY        0x8410
+#define VGA_MAROON      0x8000
+#define VGA_YELLOW      0xFFE0
+#define VGA_OLIVE       0x8400
+#define VGA_LIME        0x07E0
+#define VGA_AQUA        0x07FF
+#define VGA_TEAL        0x0410
+#define VGA_NAVY        0x0010
+#define VGA_FUCHSIA     0xF81F
+#define VGA_PURPLE      0x8010
+#define VGA_TRANSPARENT 0xFFFFFFFF
+
 #include <MCUFRIEND_kbv.h>
 
 struct _current_font
 {
-	uint8_t* font;
+	//uint8_t* font;
 	uint8_t x_size;
 	uint8_t y_size;
-	uint8_t offset;
-	uint8_t numchars;
+	//uint8_t offset;
+	//uint8_t numchars;
 };
 
-class UTFTGLUE : public MCUFRIEND_kbv
+class UTFT : public MCUFRIEND_kbv
 {
 	public:
-//	UTFTGLUE() : MCUFRIEND_kbv() {}
-	UTFTGLUE(byte model, int RS, int WR,int CS, int RST, int RD = A0) : MCUFRIEND_kbv(CS, RS, WR, RD, RST) {}
+//	UTFT() : MCUFRIEND_kbv() {}
+	UTFT(byte model, int RS, int WR,int CS, int RST, int RD = A0) : MCUFRIEND_kbv(CS, RS, WR, RD, RST) {}
 	void InitLCD(byte orientation=LANDSCAPE) {
 	     MCUFRIEND_kbv::reset();
 		 uint16_t ID = MCUFRIEND_kbv::readID();
@@ -41,12 +63,17 @@ class UTFTGLUE : public MCUFRIEND_kbv
 //		 if (ID == 0x00D3 || ID == 0xD3D3) ID = 0x9486;   //write-only controller
 //         if (ID == 0x9327 && orientation == LANDSCAPE) orientation = 3;
 		 MCUFRIEND_kbv::begin(ID);
-		 MCUFRIEND_kbv::setRotation(_orient = orientation);
+		 MCUFRIEND_kbv::setRotation(orient = orientation);
 		 _radius = 4;
+		 disp_x_size = MCUFRIEND_kbv::width() - 1;
+		 disp_y_size = MCUFRIEND_kbv::height() - 1;
+		 cfont.x_size = 6;
+		 cfont.y_size = 8;
     }
 	void clrScr() { MCUFRIEND_kbv::fillScreen(0x0000);}
 	void drawPixel(int x, int y) { MCUFRIEND_kbv::drawPixel(x, y, _fcolor);}
 	void drawLine(int x1, int y1, int x2, int y2) { MCUFRIEND_kbv::drawLine(x1, y1, x2, y2, _fcolor);}
+	void drawHLine(int x, int y, int l) { MCUFRIEND_kbv::drawFastHLine(x, y, l, _fcolor);}
 	void fillScr(byte r, byte g, byte b) { MCUFRIEND_kbv::fillScreen(setrgb(r, g, b));}
 	void drawRect(int x1, int y1, int x2, int y2) {
 		 int w = x2 - x1 + 1, h = y2 - y1 + 1;
@@ -76,18 +103,42 @@ class UTFTGLUE : public MCUFRIEND_kbv
 	void fillCircle(int x, int y, int radius) { MCUFRIEND_kbv::fillCircle(x, y, radius, _fcolor);}
 	void setColor(byte r, byte g, byte b)  { MCUFRIEND_kbv::setTextColor(_fcolor = setrgb(r, g, b), _bcolor);}
 	void setBackColor(byte r, byte g, byte b)  { MCUFRIEND_kbv::setTextColor(_fcolor, _bcolor = setrgb(r, g, b));}
+
+
+	void setColor(word color)
+	{
+	    MCUFRIEND_kbv::setTextColor(_fcolor = color, _bcolor);
+	}
+
+	void setBackColor(uint32_t color)
+	{
+	    /*if (color==VGA_TRANSPARENT)
+	        _transparent=true;
+	    else
+	    {*/
+	    MCUFRIEND_kbv::setTextColor(_fcolor, _bcolor = color);
+	       /* _transparent=false;
+	    }*/
+	}
+
 	void print(const char *st, int x, int y, int deg=0)  {
 		 settextcursor((char*)st, x, y); MCUFRIEND_kbv::print(st);}
 	void print(char *st, int x, int y, int deg=0)  {
 		 settextcursor(st, x, y); MCUFRIEND_kbv::print(st);}
-	void print(String st, int x, int y, int deg=0) {
+	void print(String st, int x, int y, int deg=0) { settextcursorLen(st.length(), x, y);
 		 MCUFRIEND_kbv::print(st);}
+	void printChar(byte c, int x, int y) { settextcursorLen(1, x, y); MCUFRIEND_kbv::print(c); }
 	void printNumI(long num, int x, int y, int length=0, char filler=' ') {
 		 char buf[16]; ltoa(num, buf, 10); 
 		 settextcursor(buf, x, y); MCUFRIEND_kbv::print(buf);}
 	void printNumF(double num, byte dec, int x, int y, char divider='.', int length=0, char filler=' ') {
 		 settextcursor((char*)"", x, y); MCUFRIEND_kbv::print(num, dec);}
-	void setFont(uint8_t* font) { MCUFRIEND_kbv::setTextSize(1);}
+	void setFont(uint8_t* font) {
+	    uint8_t fontSize = pgm_read_byte(&font[0]);
+	    MCUFRIEND_kbv::setTextSize(fontSize);
+        cfont.x_size = 6*fontSize;
+        cfont.y_size = 8*fontSize;
+	}
 
 	void drawBitmap(int x, int y, int sx, int sy, uint16_t *data, int scale=1) {
 		 uint16_t color;
@@ -106,15 +157,36 @@ class UTFTGLUE : public MCUFRIEND_kbv
 //	void lcdOff();
 //	void lcdOn();
 //	void setContrast(char c);
-	int  getDisplayXSize() { return MCUFRIEND_kbv::width(); }
-	int	 getDisplayYSize() { return MCUFRIEND_kbv::height(); }
+
+	int getDisplayXSize()
+	{
+	    if (orient==PORTRAIT)
+	        return disp_x_size+1;
+	    else
+	        return disp_y_size+1;
+	}
+
+	int getDisplayYSize()
+	{
+	    if (orient==PORTRAIT)
+	        return disp_y_size+1;
+	    else
+	        return disp_x_size+1;
+	}
+
 //	void LCD_Write_DATA(char VH,char VL);
 	//		void dispBitmap(File inFile);
+
+    uint8_t orient;
+    int disp_x_size, disp_y_size;
+    _current_font   cfont;
+
 	protected:
 	uint16_t _fcolor;
 	uint16_t _bcolor;
 	uint8_t _radius;
-	uint8_t _orient;
+
+
     void settextcursor(char *st, int x, int y) {
 		int pos;
 		if (x == CENTER || x == RIGHT) {
@@ -124,7 +196,16 @@ class UTFTGLUE : public MCUFRIEND_kbv
 		}			
         MCUFRIEND_kbv::setCursor(x, y);
 	}
+    void settextcursorLen(unsigned int strLen, int x, int y) {
+        int pos;
+        if (x == CENTER || x == RIGHT) {
+            pos = (MCUFRIEND_kbv::width() - strLen * 6);
+            if (x == CENTER) x = pos/2;
+            else x = pos;
+        }
+        MCUFRIEND_kbv::setCursor(x, y);
+    }
     uint16_t setrgb(byte r, byte g, byte b)  { return ((r&0xF8) << 8) | ((g&0xFC) << 3) | (b>>3);}
 };
 
-#endif /* UTFTGLUE_H_ */
+#endif /* UTFT_H_ */

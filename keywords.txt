@@ -7,7 +7,7 @@
 #######################################
 
 MCUFRIEND_kbv	KEYWORD1
-#UTFTGLUE	KEYWORD1
+#UTFT	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)

@@ -1,10 +1,11 @@
 #define SSD1289_JUMPERS 2       //Uno Shield with VERY different pin-out to Mcufriend
 // only define one "USE_XXX" macro at any time
+
 //#define USE_SSD1289_SHIELD_UNO 
 //#define USE_SSD1289_SHIELD_MEGA 
 //#define USE_SSD1289_SHIELD_DUE 
 //#define USE_MEGA_8BIT_PROTOSHIELD
-#define USE_MEGA_16BIT_SHIELD     //RD on PL6 (D43)
+//#define USE_MEGA_16BIT_SHIELD     //RD on PL6 (D43)
 //#define USE_BLD_BST_MEGA32U4
 //#define USE_BLD_BST_MEGA2560
 //#define USE_DUE_8BIT_PROTOSHIELD
