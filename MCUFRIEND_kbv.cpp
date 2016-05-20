@@ -5,9 +5,10 @@
 //#define SUPPORT_8347A           //costs about +178 bytes on top of 8347D
 //#define OFFSET_9327 32             //costs about 103 bytes, 0.08s
 
+#include <DisplayConfig.h.template>
 #include "MCUFRIEND_kbv.h"
+
 #if defined(USE_SERIAL)
- //#include <SPI.h>
 #include "mcufriend_serial.h"
 uint8_t running;
 #elif defined(USE_KEIL)
@@ -582,13 +583,15 @@ void MCUFRIEND_kbv::vertScroll(int16_t top, int16_t scrollines, int16_t offset)
 #endif
     int16_t bfa = HEIGHT - top - scrollines;  // bottom fixed area
     int16_t vsp;
-    int16_t sea = top;
 	if (_lcd_ID == 0x9327) bfa += 32;
     if (offset <= -scrollines || offset >= scrollines) offset = 0; //valid scroll
 	vsp = top + offset; // vertical start position
     if (offset < 0)
         vsp += scrollines;          //keep in unsigned range
-    sea = top + scrollines - 1;
+
+#if defined(SUPPORT_0139) || defined(SUPPORT_0154)
+    int16_t sea = top + scrollines - 1;
+#endif
     if (_lcd_capable & MIPI_DCS_REV1) {
         uint8_t d[6];           // for multi-byte parameters
 /*
@@ -684,7 +687,6 @@ void MCUFRIEND_kbv::vertScroll(int16_t top, int16_t scrollines, int16_t offset)
 
 void MCUFRIEND_kbv::invertDisplay(boolean i)
 {
-    uint8_t val;
     _lcd_rev = ((_lcd_capable & REV_SCREEN) != 0) ^ i;
     if (_lcd_capable & MIPI_DCS_REV1) {
 #ifdef SUPPORT_8347D
@@ -692,9 +694,9 @@ void MCUFRIEND_kbv::invertDisplay(boolean i)
             // HX8347D: 0x36 Panel Characteristic. REV_Panel
             // HX8347A: 0x36 is Display Control 10
 #if defined(SUPPORT_8347D)
-            val = _lcd_rev ? 8 : 10;     //HX8347-D: SCROLLON=bit3, INVON=bit1
+            uint8_t val = _lcd_rev ? 8 : 10;     //HX8347-D: SCROLLON=bit3, INVON=bit1
 #else
-            val = _lcd_rev ? 6 : 2;     //INVON id bit#2 on HX8347-A.  NORON=bit#1
+            uint8_t val = _lcd_rev ? 6 : 2;     //INVON id bit#2 on HX8347-A.  NORON=bit#1
 #endif
             // HX8347: 0x01 Display Mode has diff bit mapping for A, D 
             WriteCmdParamN(0x01, 1, &val);

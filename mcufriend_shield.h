@@ -1,5 +1,7 @@
 //#define USE_SPECIAL             //check for custom drivers
-#define UNO_SHIELD_MOD_FOR_MEGA
+
+#include <DisplayConfig.h.template>
+
 #if defined(USE_SPECIAL)
 #include "mcufriend_special.h"
 #if !defined(USE_SPECIAL_FAIL)

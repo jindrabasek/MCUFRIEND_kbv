@@ -1,3 +1,7 @@
+#include <DisplayConfig.h.template>
+
+#if defined(USE_SERIAL)
+
 #if ARDUINO >= 165
 #include <SPI.h>
 #endif
@@ -362,3 +366,5 @@ static inline uint8_t xchg8(uint8_t x)    {
 #define CTL_INIT()   { CD_OUTPUT; CS_OUTPUT; RESET_OUTPUT; SPI_INIT(); }
 #define WriteCmd(x)  { CD_COMMAND; write8(x); }
 #define WriteData(x) { CD_DATA; write16(x); }
+
+#endif

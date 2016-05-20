@@ -1,4 +1,6 @@
-#define SSD1289_JUMPERS 2       //Uno Shield with VERY different pin-out to Mcufriend
+#include <DisplayConfig.h.template>
+
+//#define SSD1289_JUMPERS 2       //Uno Shield with VERY different pin-out to Mcufriend
 // only define one "USE_XXX" macro at any time
 
 //#define USE_SSD1289_SHIELD_UNO 

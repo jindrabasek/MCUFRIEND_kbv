@@ -1,0 +1,16 @@
+/*
+ * DisplayConfig.h
+ *
+ *  Created on: 19. 5. 2016
+ *      Author: jindra
+ */
+
+#ifndef DISPLAYCONFIG_H_
+#define DISPLAYCONFIG_H_
+
+
+#define UNO_SHIELD_MOD_FOR_MEGA
+#define SUPPORT_9486
+
+
+#endif /* DISPLAYCONFIG_H_ */
